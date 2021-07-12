@@ -1,14 +1,25 @@
-FROM registry.access.redhat.com/ubi8/nodejs-14
+FROM node:14.17.1 as base
 
-# Add application sources to a directory that the assemble script expects them
-# and set permissions so that the container runs without root access
-USER 0
-ADD . /tmp/src
-RUN chown -R 1001:0 /tmp/src
-USER 1001
+# Add package file
+COPY package*.json ./
 
-# Install the dependencies
-RUN /usr/libexec/s2i/assemble
+# Install deps
+RUN npm i
 
-# Set the default command for the resulting image
-CMD /usr/libexec/s2i/run
+# Copy source
+COPY src ./src
+COPY tsconfig.json ./tsconfig.json
+COPY memcached-deployment.json ./memcached-deployment.json
+
+# Build dist
+RUN npm run build
+
+# Start production image build
+FROM gcr.io/distroless/nodejs:14
+
+# Copy node modules and build directory
+COPY --from=base ./node_modules ./node_modules
+COPY --from=base /dist /dist
+COPY --from=base /memcached-deployment.json /memcached-deployment.json
+
+CMD ["dist/index.js"]
