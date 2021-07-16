@@ -20,7 +20,7 @@ spec:
         - env:
             - name: DEV_MODE
               value: 'false'
-          image: ghcr.io/nielspeter/operator-in-javascript:release
+          image: ghcr.io/nielspeter/operator-in-javascript:main
           imagePullPolicy: Always
           name: ts-operator
       serviceAccount: ts-operator
