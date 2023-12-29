@@ -14,10 +14,10 @@ This will create the `ts-operator` namespace and populate it with a Deployment r
 
 It will also create the `Memcached` Custom Resource Definition and the `memcached-editor` Role.
 
-Move to the `ts-operator` project:
+Move to the `ts-operator` namespace:
 
 ```bash
-kubectl project ts-operator
+kubectl config set-context --current --namespace=ts-operator
 ```
 
 Tail the logs of the operator by running:
